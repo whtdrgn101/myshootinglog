@@ -1,0 +1,38 @@
+<template>
+    <div class="container">
+        <div class="row">
+            <div class="box">
+                <div class="col-lg-12">
+                  <div class="page-header">
+                    <h3>Welcome, please enter your email and password to create your account</h3>
+                  </div>
+                    <form id="registrationForm">
+                        <div class="col-md-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">User Information</div>
+                                <div class="panel-body">
+                                    <fieldset class="form-group">
+                                        <label for="email">Email:</label>
+                                        <input type="text" class="form-control" id="email" value.bind="user.email" />
+                                    </fieldset>
+                                    <fieldset class="form-group">
+                                        <label for="password">Password:</label>
+                                        <input type="password" class="form-control" id="password" value.bind="user.password" />
+                                    </fieldset>
+                                    <fieldset class="form-group">
+                                        <label for="confpassword">Confirm password:</label>
+                                        <input type="password" class="form-control" id="confpassword" value.bind="user.confpassword" />
+                                    </fieldset>
+                                    <p class="bg-danger" show.bind="errorMessage" >${errorMessage}</p>
+                                </div>
+                                <div class="panel-footer">
+                                    <button type="submit" class="btn btn-primary" click.delegate="register()">Register</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

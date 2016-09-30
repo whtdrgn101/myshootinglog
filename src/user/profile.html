@@ -1,0 +1,34 @@
+<template>
+  <section class="au-animate">
+    <div class="box">
+      <div class="row">
+        <div class="col-md-9">Your MyShootingLog Profile
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <img src.bind="store.user.image" />
+          <input type="file" accept="image/*" files.bind="file" change.delegate="embedFile()">
+
+        </div>
+        <div class="col-md-6">
+          <dl>
+            <dt>Login</dt>
+            <dd>${store.user.email}</dd>
+            <dt>Member Since</dt>
+            <dd>${store.user.member-since}</dd>
+            <dt>Name</dt>
+            <dd><input type="text" value.bind="store.user.name"></dd>
+            <dt>Location</dt>
+            <dd><input type="text" value.bind="store.user.location"></dd>
+            <dt>Most used bows:</dt>
+            <dd></dd>
+            <dt>Highest Lifetime Round Score:</dt>
+            <dd></dd>
+          </dl>
+          <button click.delegate="saveProfile()">Save</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>

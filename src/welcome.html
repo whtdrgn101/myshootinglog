@@ -1,0 +1,60 @@
+<template>
+  <section class="au-animate container-fluid">
+    <div class="page-header">
+      <h2>${heading}</h2>
+    </div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="box">
+          <h3>Dashboard:</h3>
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">Last Round</div>
+              <div class="panel-body">
+                <dl>
+                  <dt>Score</dt>
+                  <dd></dd>
+                  <dt>Ends</dt>
+                  <dd></dd>
+                </dl>
+              </div>
+              <div class="panel-footer">details...</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">30 Day Stats (over ${last30Stats.count} rounds)</div>
+              <div class="panel-body">
+                <dl>
+                  <dt>Avg Score</dt>
+                  <dd>${last30Stats.averageRound}</dd>
+                  <dt>High Score</dt>
+                  <dd>${last30Stats.highRound}</dd>
+                  <dt>Low Score</dt>
+                  <dd>${last30Stats.lowRound}</dd>
+                </dl>
+              </div>
+              <div class="panel-footer">details...</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="panel panel-default">
+              <div class="panel-heading">Lifetime Stats (over ${lifetimeStats.count} rounds)</div>
+              <div class="panel-body">
+                <dl>
+                  <dt>Avg Score</dt>
+                  <dd>${lifetimeStats.averageRound}</dd>
+                  <dt>High Score</dt>
+                  <dd>${lifetimeStats.highRound}</dd>
+                  <dt>Low Score</dt>
+                  <dd>${lifetimeStats.lowRound}</dd>
+                </dl>
+              </div>
+              <div class="panel-footer">details...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>

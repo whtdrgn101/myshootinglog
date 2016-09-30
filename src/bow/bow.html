@@ -1,0 +1,36 @@
+<template>
+  <section class="au-animate container-fluid">
+    <h2>${heading}</h2>
+    <form class="form-horizontal" role="form" submit.delegate="save()">
+      <div class="form-group">
+        <label for="fn">Name</label>
+        <input type="text" value.bind="bow.name" class="form-control" id="fn" placeholder="" required>
+      </div>
+      <div class="form-group">
+        <label for="fn">Type</label>
+        <input type="text" value.bind="bow.type" class="form-control" id="fn" placeholder="" required>
+      </div>
+      <div class="form-group">
+        <label for="fn">Make</label>
+        <input type="text" value.bind="bow.make" class="form-control" id="fn" placeholder="" required>
+      </div>
+      <div class="form-group">
+        <label for="fn">Model</label>
+        <input type="text" value.bind="bow.model" class="form-control" id="fn" placeholder="" required>
+      </div>
+      <div class="form-group">
+        <label for="fn">Poundage</label>
+        <input type="text" value.bind="bow.poundage" class="form-control" id="fn" placeholder="" required>
+      </div>
+      <div class="form-group">
+        <label for="fn">AMO Length</label>
+        <input type="text" value.bind="bow.amoLength" class="form-control" id="fn" placeholder="">
+      </div>
+      <div class="form-group">
+        <label for="fn">Brace Height</label>
+        <input type="text" value.bind="bow.braceHeight" class="form-control" id="fn" placeholder="">
+      </div>
+      <button type="submit" class="btn btn-default">Save</button>
+    </form>
+  </section>
+</template>

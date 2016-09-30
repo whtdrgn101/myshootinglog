@@ -1,0 +1,49 @@
+<template>
+  <section class="au-animate container-fluid">
+    <form class="form-horizontal" role="form" submit.delegate="save()">
+      <fieldset>
+        <legend>${heading}</legend>
+        <div class="form-group">
+          <label for="recordedDate">Round Date</label>
+          <input type="date" message="roundDate.send" value.bind="round.recordedDate" class="form-control" id="recordedDate" placeholder="" required />
+        </div>
+        <div class="form-group">
+          <label for="bow">Bow</label>
+          <select id="bow" class="form-control" value.bind="round.bowName" required>
+            <option repeat.for="bow of store.scorecard.bows" model.bind="bow.name">${bow.name}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" class="form-control" value.bind="round.notes" rows="7" cols="50"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="score">Round Score</label>
+          <input type="text" value.bind="round.score" class="form-control" id="score" placeholder="" />
+        </div>
+        <div class="form-group">
+          <table class="table">
+            <caption>Add New End: <input type="text" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></caption>
+            <thead>
+              <tr>
+                <th></th>
+                <th>End#</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr repeat.for="end of round.ends">
+                <td><button click.delegate="$parent.deleteEnd(end)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button></td>
+                <td>${end.number}</td>
+                <td><input type="text" value.bind="end.score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.number}" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <button type="submit" class="btn btn-default">Save</button>
+      </fieldset>
+    </form>
+  </section>
+</template>

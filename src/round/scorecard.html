@@ -1,0 +1,32 @@
+<template>
+  <require from="../resources/value-converters/dateFormatValueConverter"></require>
+  <section class="au-animate container-fluid">
+    <div class="page-header">
+      <h2>${heading}&nbsp;
+        <button click.delegate="newRound()">
+          <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> New Round
+        </button>
+      </h2>
+    </div>
+    <p class="bg-danger" show.bind="errorMessage" >${errorMessage}</p>
+    <div class="container-fluid">
+      <div class="row hidden-xs">
+        <div class="col-md-2 col-sm-2"></div>
+        <div class="col-md-1 col-sm-1"><strong>Date</strong></div>
+        <div class="col-md-3 col-sm-3"><strong>Bow</strong></div>
+        <div class="col-md-1 col-sm-1"><strong>Score</strong></div>
+        <div class="col-md-1 col-sm-1"><strong>Ends</strong></div>
+      </div>
+      <div class="row ${ $even ? 'even' :''}" repeat.for="round of dataLayer.scorecard.rounds">
+        <div class="col-md-2 col-sm-2">
+          <button click.delegate="$parent.editRound(round)"><span class="glyphicon glyphicon-pencil"></span></button>
+          <button click.delegate="$parent.deleteRound(round)"><span class="glyphicon glyphicon-trash"></span></button>
+        </div>
+        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Date</strong>${round.recordedDate | dateFormat}</div>
+        <div class="col-md-3 col-sm-3"><strong class="visible-xs">Bow</strong>${round.bowName}</div>
+        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Score</strong>${round.score}</div>
+        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Ends</strong>${round.ends.length}</div>
+      </div>
+    </div>
+  </section>
+</template>
