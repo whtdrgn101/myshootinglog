@@ -11,9 +11,9 @@
       <div class="row hidden-xs">
         <div class="col-md-2 col-sm-2"></div>
         <div class="col-md-3 col-sm-3"><strong>Name</strong></div>
-        <div class="col-md-1 col-sm-1"><strong>Type</strong></div>
+        <div class="col-md-1 col-sm-2"><strong>Type</strong></div>
         <div class="col-md-1 col-sm-1"><strong>Make</strong></div>
-        <div class="col-md-1 col-sm-1"><strong>Model</strong></div>
+        <div class="col-md-1 col-sm-2"><strong>Model</strong></div>
         <div class="col-md-1 col-sm-1"><strong>Poundage</strong></div>
       </div>
       <div class="row ${ $even ? 'even' :''}" repeat.for="bow of dataLayer.scorecard.bows">
@@ -22,9 +22,9 @@
           <button click.delegate="$parent.deleteBow(bow)"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
         <div class="col-md-3 col-sm-3"><strong class="visible-xs">Name</strong>${bow.name}</div>
-        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Type</strong>${bow.type}</div>
+        <div class="col-md-1 col-sm-2"><strong class="visible-xs">Type</strong>${bow.type}</div>
         <div class="col-md-1 col-sm-1"><strong class="visible-xs">Make</strong>${bow.make}</div>
-        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Model</strong>${bow.model}</div>
+        <div class="col-md-1 col-sm-2"><strong class="visible-xs">Model</strong>${bow.model}</div>
         <div class="col-md-1 col-sm-1"><strong class="visible-xs">Poundage</strong>${bow.poundage}</div>
       </div>
     </div>
