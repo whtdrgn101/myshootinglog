@@ -7,6 +7,15 @@ import _ from 'underscore';
 @inject(Router, Store, EventAggregator)
 export class Round {
   heading = 'Round';
+  roundTypes = [
+    'FITA 18',
+    'FITA 25',
+    'FITA 30',
+    'FITA 50',
+    'FITA 70',
+    'FITA 90',
+    'Other'
+  ];
   newEndScore = 30;
   round = {};
   
