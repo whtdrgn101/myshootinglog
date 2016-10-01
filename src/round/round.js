@@ -6,7 +6,7 @@ import _ from 'underscore';
 
 @inject(Router, Store, EventAggregator)
 export class Round {
-  heading = 'Round ';
+  heading = 'Round';
   newEndScore = 30;
   round = {};
   

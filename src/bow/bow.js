@@ -8,7 +8,14 @@ export class Bow {
   
   heading = 'Bow Details';
   bow = {};
-  
+  bowTypes = [
+    'Compound',
+    'Crossbow',
+    'Longbow',
+    'Recurve',
+    'Self',
+    'Stick'
+  ];
   constructor(router, _store, _eventAggregator){
     this.appRouter = router;
     this.store = _store;

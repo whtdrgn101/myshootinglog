@@ -19,11 +19,11 @@
         </div>
         <div class="form-group">
           <label for="score">Round Score</label>
-          <input type="text" value.bind="round.score" class="form-control" id="score" placeholder="" />
+          <input type="number" value.bind="round.score" class="form-control" id="score" placeholder="" />
         </div>
         <div class="form-group">
           <table class="table">
-            <caption>Add New End: <input type="text" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></caption>
+            <caption>Add New End: <input type="number" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></caption>
             <thead>
               <tr>
                 <th></th>
@@ -37,7 +37,7 @@
                   <span class="glyphicon glyphicon-trash"></span>
                 </button></td>
                 <td>${end.number}</td>
-                <td><input type="text" value.bind="end.score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.number}" /></td>
+                <td><input type="number" value.bind="end.score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.number}" /></td>
               </tr>
             </tbody>
           </table>
