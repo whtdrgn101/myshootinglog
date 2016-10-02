@@ -101,6 +101,7 @@
             ]
           },
           "underscore",
+          "moment",
           "aurelia-binding",
           "aurelia-bootstrapper",
           "aurelia-dependency-injection",

@@ -1,11 +1,12 @@
 <template>
+  <require from="../resources/value-converters/dateFormatValueConverter"></require>
   <section class="au-animate container-fluid">
     <form class="form-horizontal" role="form" submit.delegate="save()">
       <fieldset>
         <legend>${heading}</legend>
         <div class="form-group">
           <label for="recordedDate">Round Date</label>
-          <input type="date" message="roundDate.send" value.bind="round.recordedDate" class="form-control" id="recordedDate" placeholder="" required />
+          <input type="date" message="roundDate.send" value.bind="round.recordedDate | dateFormat: 'YYYY-MM-DD'" class="form-control" id="recordedDate" placeholder="" required />
         </div>
         <div class="form-group">
           <label for="type">Round Type</label>
@@ -28,25 +29,24 @@
           <input type="number" value.bind="round.score" class="form-control" id="score" placeholder="" />
         </div>
         <div class="form-group">
-          <table class="table">
-            <caption>Add New End: <input type="number" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></caption>
-            <thead>
-              <tr>
-                <th></th>
-                <th>End#</th>
-                <th>Score</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr repeat.for="end of round.ends">
-                <td><button click.delegate="$parent.deleteEnd(end)">
-                  <span class="glyphicon glyphicon-trash"></span>
-                </button></td>
-                <td>${end.number}</td>
-                <td><input type="number" value.bind="end.score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.number}" /></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="row">
+            <div class="col-md-2 col-sm-2"><strong>Add New End:</strong></div>
+            <div class="col-md-3 col-sm-4"><input type="number" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></div>
+          </div>
+          <div class="row hidden-xs">
+            <div class="col-md-1 col-sm-1"></div>
+            <div class="col-md-1 col-sm-1"><strong>End#</strong></div>
+            <div class="col-md-2 col-sm-3"><strong>Score</strong></div>
+          </div>
+          <div class="row" repeat.for="end of round.ends">
+            <div class="col-md-1 col-sm-1">
+              <button click.delegate="$parent.deleteEnd(end)">
+                <span class="glyphicon glyphicon-trash"></span>
+              </button>
+            </div>
+            <div class="col-md-1 col-sm-1"><strong class="visible-xs">End#</strong>${end.number}</div>
+            <div class="col-md-2 col-sm-2"><strong class="visible-xs">Score</strong><input type="number" value.bind="end.score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.number}" /></div>
+          </div>
         </div>
         <button type="submit" class="btn btn-default">Save</button>
       </fieldset>

@@ -12,9 +12,9 @@
     <div class="container-fluid">
       <div class="row hidden-xs">
         <div class="col-md-2 col-sm-2"></div>
-        <div class="col-md-1 col-sm-1"><strong>Date</strong></div>
+        <div class="col-md-2 col-sm-2"><strong>Date</strong></div>
         <div class="col-md-2 col-sm-2"><strong>Type</strong></div>
-        <div class="col-md-3 col-sm-3"><strong>Bow</strong></div>
+        <div class="col-md-2 col-sm-2"><strong>Bow</strong></div>
         <div class="col-md-1 col-sm-1"><strong>Score</strong></div>
         <div class="col-md-1 col-sm-1"><strong>Ends</strong></div>
       </div>
@@ -23,9 +23,9 @@
           <button click.delegate="$parent.editRound(round)"><span class="glyphicon glyphicon-pencil"></span></button>
           <button click.delegate="$parent.deleteRound(round)"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
-        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Date</strong>${round.recordedDate | dateFormat}</div>
+        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Date</strong>${round.recordedDate | dateFormat: 'YYYY-MM-DD'}</div>
         <div class="col-md-2 col-sm-2"><strong class="visible-xs">Type</strong>${round.roundType}</div>
-        <div class="col-md-3 col-sm-3"><strong class="visible-xs">Bow</strong>${round.bowName}</div>
+        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Bow</strong>${round.bowName}</div>
         <div class="col-md-1 col-sm-1"><strong class="visible-xs">Score</strong>${round.score}</div>
         <div class="col-md-1 col-sm-1"><strong class="visible-xs">Ends</strong>${round.ends.length}</div>
       </div>
