@@ -7,4 +7,13 @@
   <div class="page-host">
     <router-view></router-view>
   </div>
+
+  <footer class="container-fluid">
+    <hr />
+    <div class="row">
+      <div class="col-sm-6 col-md-6 text-left"><span show.bind="store.user">Logged In As: ${store.user.email}</span></div>
+      <div class="col-sm-6 col-md-6 text-right"><span class="hidden-xs">MyShootingLog by <a href="mailto:timothy.dewees@gmail.com">Timothy DeWees</a></span></div>
+    </div>
+  </footer>
+
 </template>

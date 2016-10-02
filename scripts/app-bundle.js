@@ -1055,13 +1055,21 @@ define('user/register',['exports', 'aurelia-framework', 'aurelia-router', 'commo
     return Login;
   }()) || _class);
 });
-define('resources/elements/nav-bar',['exports', 'aurelia-framework'], function (exports, _aureliaFramework) {
+define('resources/elements/nav-bar',['exports', 'aurelia-framework', 'common/shooting-log-store'], function (exports, _aureliaFramework, _shootingLogStore) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
   exports.NavBar = undefined;
+
+  var _shootingLogStore2 = _interopRequireDefault(_shootingLogStore);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
 
   function _initDefineProp(target, property, descriptor, context) {
     if (!descriptor) return;
@@ -1130,18 +1138,22 @@ define('resources/elements/nav-bar',['exports', 'aurelia-framework'], function (
     throw new Error('Decorating class property failed. Please ensure that transform-class-properties is enabled.');
   }
 
-  var _desc, _value, _class, _descriptor;
+  var _dec, _class, _desc, _value, _class2, _descriptor;
 
-  var NavBar = exports.NavBar = (_class = function () {
-    function NavBar() {
+  var NavBar = exports.NavBar = (_dec = (0, _aureliaFramework.inject)(_shootingLogStore2.default), _dec(_class = (_class2 = function () {
+    function NavBar(store) {
       _classCallCheck(this, NavBar);
 
       _initDefineProp(this, 'router', _descriptor, this);
+
+      this.store = store;
     }
 
     NavBar.prototype.logout = function logout() {
       sessionStorage.clear();
-      this.appRouter.navigateToRoute('login');
+      this.store.user = null;
+      this.store.authToken = null;
+      this.router.navigateToRoute('login');
     };
 
     _createClass(NavBar, [{
@@ -1153,12 +1165,12 @@ define('resources/elements/nav-bar',['exports', 'aurelia-framework'], function (
     }]);
 
     return NavBar;
-  }(), (_descriptor = _applyDecoratedDescriptor(_class.prototype, 'router', [_aureliaFramework.bindable], {
+  }(), (_descriptor = _applyDecoratedDescriptor(_class2.prototype, 'router', [_aureliaFramework.bindable], {
     enumerable: true,
     initializer: function initializer() {
       return null;
     }
-  })), _class);
+  })), _class2)) || _class);
 });
 define('resources/value-converters/dateFormatValueConverter',['exports', 'moment'], function (exports, _moment) {
   'use strict';
@@ -1198,7 +1210,7 @@ define('resources/value-converters/dateFormatValueConverter',['exports', 'moment
     return DateFormatValueConverter;
   }();
 });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"resources/elements/nav-bar\"></require>\n  <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.css\">\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"resources/elements/nav-bar\"></require>\n  <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.css\">\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n\n  <footer class=\"container-fluid\">\n    <hr />\n    <div class=\"row\">\n      <div class=\"col-sm-6 col-md-6 text-left\"><span show.bind=\"store.user\">Logged In As: ${store.user.email}</span></div>\n      <div class=\"col-sm-6 col-md-6 text-right\"><span class=\"hidden-xs\">MyShootingLog by <a href=\"mailto:timothy.dewees@gmail.com\">Timothy DeWees</a></span></div>\n    </div>\n  </footer>\n\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}</h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row\">\n        <div class=\"box\">\n          <h3>Dashboard:</h3>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Last Round</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Score</dt>\n                  <dd></dd>\n                  <dt>Ends</dt>\n                  <dd></dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">30 Day Stats (over ${last30Stats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${last30Stats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${last30Stats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${last30Stats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Lifetime Stats (over ${lifetimeStats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${lifetimeStats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${lifetimeStats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${lifetimeStats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!bow/bow.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <h2>${heading}</h2>\n    <form class=\"form-horizontal\" role=\"form\" submit.delegate=\"save()\">\n      <div class=\"form-group\">\n        <label for=\"name\">Name</label>\n        <input type=\"text\" value.bind=\"bow.name\" class=\"form-control\" id=\"name\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"type\">Type</label>\n        <select id=\"type\" value.bind=\"bow.type\" class=\"form-control\">\n          <option repeat.for=\"btype of bowTypes\" value.bind=\"btype\">${btype}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"make\">Make</label>\n        <input type=\"text\" value.bind=\"bow.make\" class=\"form-control\" id=\"make\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"model\">Model</label>\n        <input type=\"text\" value.bind=\"bow.model\" class=\"form-control\" id=\"model\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"poundage\">Poundage</label>\n        <input type=\"number\" value.bind=\"bow.poundage\" class=\"form-control\" id=\"poundage\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"amoLength\">AMO Length</label>\n        <input type=\"number\" value.bind=\"bow.amoLength\" class=\"form-control\" id=\"amoLength\" placeholder=\"\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"braceHeight\">Brace Height</label>\n        <input type=\"number\" value.bind=\"bow.braceHeight\" class=\"form-control\" id=\"braceHeight\" placeholder=\"\">\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Save</button>\n    </form>\n  </section>\n</template>\n"; });
 define('text!bow/bow_list.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}&nbsp;\n        <button class=\"fa fa-plus\" click.delegate=\"newBow()\">\n          <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> New Bow\n        </button>\n      </h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row hidden-xs\">\n        <div class=\"col-md-2 col-sm-2\"></div>\n        <div class=\"col-md-3 col-sm-3\"><strong>Name</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Type</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Make</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Model</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Poundage</strong></div>\n      </div>\n      <div class=\"row ${ $even ? 'even' :''}\" repeat.for=\"bow of dataLayer.scorecard.bows\">\n        <div class=\"col-md-2 col-sm-2\">\n          <button click.delegate=\"$parent.editBow(bow)\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button click.delegate=\"$parent.deleteBow(bow)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </div>\n        <div class=\"col-md-3 col-sm-3\"><strong class=\"visible-xs\">Name</strong>${bow.name}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Type</strong>${bow.type}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Make</strong>${bow.make}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Model</strong>${bow.model}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Poundage</strong>${bow.poundage}</div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
