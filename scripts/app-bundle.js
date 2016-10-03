@@ -737,9 +737,8 @@ define('round/round',['exports', 'aurelia-framework', 'aurelia-router', 'common/
           self.round = r;
         });
       } else {
-        var dt = new Date();
         this.round = {
-          recordedDate: Number(dt.getMonth()) + 1 + "/" + dt.getDate() + "/" + dt.getFullYear(),
+          recordedDate: new Date(),
           score: 30,
           bowId: 1,
           ends: [{ number: 1, score: 30 }]
@@ -1055,6 +1054,44 @@ define('user/register',['exports', 'aurelia-framework', 'aurelia-router', 'commo
     return Login;
   }()) || _class);
 });
+define('resources/value-converters/dateFormatValueConverter',['exports', 'moment'], function (exports, _moment) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.DateFormatValueConverter = undefined;
+
+  var _moment2 = _interopRequireDefault(_moment);
+
+  function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : {
+      default: obj
+    };
+  }
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  var DateFormatValueConverter = exports.DateFormatValueConverter = function () {
+    function DateFormatValueConverter() {
+      _classCallCheck(this, DateFormatValueConverter);
+    }
+
+    DateFormatValueConverter.prototype.toView = function toView(value, format) {
+      return (0, _moment2.default)(value).format(format);
+    };
+
+    DateFormatValueConverter.prototype.fromView = function fromView(str, format) {
+      return (0, _moment2.default)(str, format);
+    };
+
+    return DateFormatValueConverter;
+  }();
+});
 define('resources/elements/nav-bar',['exports', 'aurelia-framework', 'common/shooting-log-store'], function (exports, _aureliaFramework, _shootingLogStore) {
   'use strict';
 
@@ -1171,44 +1208,6 @@ define('resources/elements/nav-bar',['exports', 'aurelia-framework', 'common/sho
       return null;
     }
   })), _class2)) || _class);
-});
-define('resources/value-converters/dateFormatValueConverter',['exports', 'moment'], function (exports, _moment) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.DateFormatValueConverter = undefined;
-
-  var _moment2 = _interopRequireDefault(_moment);
-
-  function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : {
-      default: obj
-    };
-  }
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError("Cannot call a class as a function");
-    }
-  }
-
-  var DateFormatValueConverter = exports.DateFormatValueConverter = function () {
-    function DateFormatValueConverter() {
-      _classCallCheck(this, DateFormatValueConverter);
-    }
-
-    DateFormatValueConverter.prototype.toView = function toView(value, format) {
-      return (0, _moment2.default)(value).format(format);
-    };
-
-    DateFormatValueConverter.prototype.fromView = function fromView(str, format) {
-      return (0, _moment2.default)(str, format);
-    };
-
-    return DateFormatValueConverter;
-  }();
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"resources/elements/nav-bar\"></require>\n  <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.css\">\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n\n  <footer class=\"container-fluid\">\n    <hr />\n    <div class=\"row\">\n      <div class=\"col-sm-6 col-md-6 text-left\"><span show.bind=\"store.user\">Logged In As: ${store.user.email}</span></div>\n      <div class=\"col-sm-6 col-md-6 text-right\"><span class=\"hidden-xs\">MyShootingLog by <a href=\"mailto:timothy.dewees@gmail.com\">Timothy DeWees</a></span></div>\n    </div>\n  </footer>\n\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}</h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row\">\n        <div class=\"box\">\n          <h3>Dashboard:</h3>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Last Round</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Score</dt>\n                  <dd></dd>\n                  <dt>Ends</dt>\n                  <dd></dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">30 Day Stats (over ${last30Stats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${last30Stats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${last30Stats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${last30Stats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Lifetime Stats (over ${lifetimeStats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${lifetimeStats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${lifetimeStats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${lifetimeStats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });

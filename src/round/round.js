@@ -41,9 +41,8 @@ export class Round {
         self.round = r;
       });
     } else {
-      var dt = new Date();
       this.round = {
-        recordedDate: (Number(dt.getMonth()) + 1) + "/" + dt.getDate() + "/" + dt.getFullYear(),
+        recordedDate: new Date(),
         score: 30,
         bowId: 1,
         ends: [{number:1, score:30}]
