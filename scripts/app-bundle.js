@@ -234,12 +234,22 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
     }
 
     Bow.prototype.activate = function activate(parms, routeConfig) {
+      var _this2 = this;
+
       this.eventAggregator.publish('viewActivate');
       this.getBowTypes();
       var self = this;
       if (parms.id != undefined && parms.id !== "-1") {
-        this.store.getBow(parms.id).then(function (b) {
-          self.bow = b;
+        this.client.get("/bow/" + parms.id).then(function (data) {
+          _this2.bow = JSON.parse(data.response);
+        }).catch(function (error) {
+          if (error.status === 403) {
+            alert('Session timeout, please log in again');
+            _this2.store.clearStore();
+            _this2.router.navigateToRoute('login');
+          } else {
+            _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+          }
         });
       }
     };
@@ -248,31 +258,49 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
       if (this.bow.id === undefined) {
         this.addBow();
       } else {
-        this.eventAggregator.publish('bow.update', this.bow);
+        this.updateBow();
       }
     };
 
+    Bow.prototype.updateBow = function updateBow() {
+      var _this3 = this;
+
+      var self = this;
+      this.client.put("/bow/" + this.bow.id, JSON.stringify(this.bow)).then(function (data) {
+        self.bow = JSON.parse(data.response);
+        _this3.appRouter.navigateBack();
+      }).catch(function (error) {
+        if (error.status === 403) {
+          alert('Session timeout, please log in again');
+          _this3.store.clearStore();
+          _this3.router.navigateToRoute('login');
+        } else {
+          _this3.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+      });
+    };
+
     Bow.prototype.addBow = function addBow() {
-      var _this2 = this;
+      var _this4 = this;
 
       var self = this;
       this.bow.member_id = this.store.authToken.userId;
       this.client.post("/bow", JSON.stringify(this.bow)).then(function (data) {
-        self.bows = JSON.parse(data.response);
-        _this2.appRouter.navigateBack();
+        self.bow = JSON.parse(data.response);
+        _this4.appRouter.navigateBack();
       }).catch(function (error) {
         if (error.status === 403) {
           alert('Session timeout, please log in again');
-          _this2.store.clearStore();
-          _this2.router.navigateToRoute('login');
+          _this4.store.clearStore();
+          _this4.router.navigateToRoute('login');
         } else {
-          _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+          _this4.error = "An error occurred while retrieving the job list, please contact support or try again";
         }
       });
     };
 
     Bow.prototype.getBowTypes = function getBowTypes() {
-      var _this3 = this;
+      var _this5 = this;
 
       var self = this;
       this.client.get("/bowtype", JSON.stringify(this.bow)).then(function (data) {
@@ -280,10 +308,10 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
       }).catch(function (error) {
         if (error.status === 403) {
           alert('Session timeout, please log in again');
-          _this3.store.clearStore();
-          _this3.router.navigateToRoute('login');
+          _this5.store.clearStore();
+          _this5.router.navigateToRoute('login');
         } else {
-          _this3.error = "An error occurred while retrieving list of bow types, please contact support or try again";
+          _this5.error = "An error occurred while retrieving list of bow types, please contact support or try again";
         }
       });
     };
@@ -339,11 +367,26 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
     };
 
     BowList.prototype.editBow = function editBow(bow) {
-      this.appRouter.navigateToRoute('bow', { id: bow._id });
+      this.appRouter.navigateToRoute('bow', { id: bow.id });
     };
 
-    BowList.prototype.deleteBow = function deleteBow(bowId) {
-      if (confirm("Are you sure you want to delete t his bow?")) {}
+    BowList.prototype.deleteBow = function deleteBow(bow) {
+      var _this2 = this;
+
+      var self = this;
+      if (confirm("Are you sure you want to delete this bow?")) {
+        this.client.delete("/bow/" + bow.id).then(function (data) {
+          self.refreshBows();
+        }).catch(function (error) {
+          if (error.status === 403) {
+            alert('Session timeout, please log in again');
+            _this2.store.clearStore();
+            _this2.router.navigateToRoute('login');
+          } else {
+            _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+          }
+        });
+      }
     };
 
     BowList.prototype.activate = function activate() {
@@ -352,7 +395,7 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
     };
 
     BowList.prototype.refreshBows = function refreshBows() {
-      var _this2 = this;
+      var _this3 = this;
 
       var self = this;
       this.client.get("/user/" + this.store.authToken.userId + "/bows").then(function (data) {
@@ -360,10 +403,10 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
       }).catch(function (error) {
         if (error.status === 403) {
           alert('Session timeout, please log in again');
-          _this2.store.clearStore();
-          _this2.router.navigateToRoute('login');
+          _this3.store.clearStore();
+          _this3.router.navigateToRoute('login');
         } else {
-          _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+          _this3.error = "An error occurred while retrieving the job list, please contact support or try again";
         }
       });
     };
@@ -725,15 +768,6 @@ define('common/shooting-log-store',['exports', 'aurelia-framework', 'aurelia-fet
   }()) || _class);
   exports.default = ShootingLogStore;
 });
-define('resources/index',["exports"], function (exports) {
-  "use strict";
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.configure = configure;
-  function configure(config) {}
-});
 define('round/round',['exports', 'aurelia-framework', 'aurelia-router', 'common/shooting-log-store', 'aurelia-event-aggregator', 'underscore'], function (exports, _aureliaFramework, _aureliaRouter, _shootingLogStore, _aureliaEventAggregator, _underscore) {
   'use strict';
 
@@ -919,6 +953,15 @@ define('round/scorecard',['exports', 'aurelia-framework', 'aurelia-router', 'com
 
     return UpperValueConverter;
   }();
+});
+define('resources/index',["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.configure = configure;
+  function configure(config) {}
 });
 define('user/login',['exports', 'aurelia-framework', 'aurelia-router', 'aurelia-event-aggregator', 'common/shooting-log-store'], function (exports, _aureliaFramework, _aureliaRouter, _aureliaEventAggregator, _shootingLogStore) {
   'use strict';

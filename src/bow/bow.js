@@ -33,9 +33,20 @@ export class Bow {
     this.getBowTypes();
     var self = this;
     if(parms.id != undefined && parms.id !== "-1") {
-      this.store.getBow(parms.id).then(function(b){
-        self.bow = b;
-      });
+      this.client.get("/bow/" + parms.id)
+        .then(data => {
+          this.bow = JSON.parse(data.response);
+        })
+        .catch(error => {
+          if(error.status === 403) {
+            alert('Session timeout, please log in again');
+            this.store.clearStore();
+            this.router.navigateToRoute('login');
+          } else {
+            this.error = "An error occurred while retrieving the job list, please contact support or try again";
+          }
+
+        });
     }
   }
 
@@ -44,9 +55,28 @@ export class Bow {
     {
       this.addBow();
     } else {
-      this.eventAggregator.publish('bow.update', this.bow);
+      this.updateBow();
     }
 
+  }
+
+  updateBow() {
+    var self = this;
+    this.client.put("/bow/" + this.bow.id, JSON.stringify(this.bow))
+      .then(data => {
+        self.bow = JSON.parse(data.response);
+        this.appRouter.navigateBack();
+      })
+      .catch(error => {
+        if(error.status === 403) {
+          alert('Session timeout, please log in again');
+          this.store.clearStore();
+          this.router.navigateToRoute('login');
+        } else {
+          this.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+
+      });
   }
 
   addBow() {
@@ -54,7 +84,7 @@ export class Bow {
     this.bow.member_id = this.store.authToken.userId;
     this.client.post("/bow", JSON.stringify(this.bow))
       .then(data => {
-        self.bows = JSON.parse(data.response);
+        self.bow = JSON.parse(data.response);
         this.appRouter.navigateBack();
       })
       .catch(error => {

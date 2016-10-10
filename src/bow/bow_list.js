@@ -26,12 +26,26 @@ export class BowList{
   }
 
   editBow(bow) {
-    this.appRouter.navigateToRoute('bow', { id: bow._id });
+    this.appRouter.navigateToRoute('bow', { id: bow.id });
   }
 
-  deleteBow(bowId) {
-    if(confirm("Are you sure you want to delete t his bow?")) {
-      //this.eventAggregator.publish('bow.delete', bowId._id);
+  deleteBow(bow) {
+    var self = this;
+    if(confirm("Are you sure you want to delete this bow?")) {
+      this.client.delete("/bow/" + bow.id)
+        .then(data => {
+          self.refreshBows();
+        })
+        .catch(error => {
+          if(error.status === 403) {
+            alert('Session timeout, please log in again');
+            this.store.clearStore();
+            this.router.navigateToRoute('login');
+          } else {
+            this.error = "An error occurred while retrieving the job list, please contact support or try again";
+          }
+
+        });
     }
   }
 
