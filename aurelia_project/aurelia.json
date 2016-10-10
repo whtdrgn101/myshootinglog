@@ -122,6 +122,7 @@
           "aurelia-router",
           "aurelia-fetch-client",
           "aurelia-task-queue",
+          "aurelia-http-client",
           "aurelia-templating",
           "aurelia-templating-binding",
           {

@@ -74,24 +74,18 @@ export default class ShootingLogStore {
    *************************/
   handleViewActivate() {
     //Push scorecard into store
-    var self = this;
-    var user = this.getUserInSession();
-    this.getScorecard(user.userId).then(function(sc){
-      self.scorecard = sc;
-      self.user = sc.user;
-    }).catch(function(e){
-      self.errorMessage = e;
-    });
+    this.user = this.getUserInSession();
+    this.authToken = JSON.parse(sessionStorage.getItem('auth-token'));
   }
 
-  handleUserAuthenticated(user) {
-    this.authToken = user.token;
-    sessionStorage.setItem('auth-token', JSON.stringify(user));
+  handleUserAuthenticated(token) {
+    this.authToken = token;
+    sessionStorage.setItem('auth-token', JSON.stringify(token));
   }
 
   handleLogout() {
     this.user = null;
-    this.scorecard = {};
+    this.authToken = null;
   }
   
   handleScorecardChanged() {
@@ -294,7 +288,6 @@ export default class ShootingLogStore {
     var usr = {isAuthenticated: false};
     if(auth != null) {
       usr.userId = auth.userId;
-      usr.roles = auth.roles;
       usr.isAuthenticated = true;
     }
     return usr;

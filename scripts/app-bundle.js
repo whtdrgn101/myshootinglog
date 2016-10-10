@@ -69,7 +69,8 @@ define('environment',["exports"], function (exports) {
   });
   exports.default = {
     debug: true,
-    testing: true
+    testing: true,
+    API_URL: "http://www.myshootinglog.com:8080"
   };
 });
 define('main',['exports', './environment'], function (exports, _environment) {
@@ -187,7 +188,7 @@ define('welcome',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
     return Welcome;
   }()) || _class);
 });
-define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shooting-log-store', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaRouter, _shootingLogStore, _aureliaEventAggregator) {
+define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shooting-log-store', 'aurelia-event-aggregator', '../environment', 'aurelia-http-client'], function (exports, _aureliaFramework, _aureliaRouter, _shootingLogStore, _aureliaEventAggregator, _environment, _aureliaHttpClient) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -196,6 +197,8 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
   exports.Bow = undefined;
 
   var _shootingLogStore2 = _interopRequireDefault(_shootingLogStore);
+
+  var _environment2 = _interopRequireDefault(_environment);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -213,6 +216,8 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
 
   var Bow = exports.Bow = (_dec = (0, _aureliaFramework.inject)(_aureliaRouter.Router, _shootingLogStore2.default, _aureliaEventAggregator.EventAggregator), _dec(_class = function () {
     function Bow(router, _store, _eventAggregator) {
+      var _this = this;
+
       _classCallCheck(this, Bow);
 
       this.heading = 'Bow Details';
@@ -222,41 +227,71 @@ define('bow/bow',['exports', 'aurelia-framework', 'aurelia-router', 'common/shoo
       this.appRouter = router;
       this.store = _store;
       this.eventAggregator = _eventAggregator;
+      this.client = new _aureliaHttpClient.HttpClient().configure(function (x) {
+        x.withBaseUrl(_environment2.default.API_URL);
+        x.withHeader('x-authorization', _this.store.authToken.token);
+      });
     }
 
     Bow.prototype.activate = function activate(parms, routeConfig) {
       this.eventAggregator.publish('viewActivate');
+      this.getBowTypes();
       var self = this;
       if (parms.id != undefined && parms.id !== "-1") {
         this.store.getBow(parms.id).then(function (b) {
           self.bow = b;
         });
-      } else {
-        this.bow = {
-          name: 'New Bow',
-          make: 'Hoyte',
-          model: 'Podium',
-          type: 'Recurve',
-          poundage: 55,
-          amoLength: "62",
-          braceHeight: "6.5"
-        };
       }
     };
 
     Bow.prototype.save = function save() {
-      if (this.bow._id === undefined) {
-        this.eventAggregator.publish('bow.add', this.bow);
+      if (this.bow.id === undefined) {
+        this.addBow();
       } else {
         this.eventAggregator.publish('bow.update', this.bow);
       }
-      this.appRouter.navigateBack();
+    };
+
+    Bow.prototype.addBow = function addBow() {
+      var _this2 = this;
+
+      var self = this;
+      this.bow.member_id = this.store.authToken.userId;
+      this.client.post("/bow", JSON.stringify(this.bow)).then(function (data) {
+        self.bows = JSON.parse(data.response);
+        _this2.appRouter.navigateBack();
+      }).catch(function (error) {
+        if (error.status === 403) {
+          alert('Session timeout, please log in again');
+          _this2.store.clearStore();
+          _this2.router.navigateToRoute('login');
+        } else {
+          _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+      });
+    };
+
+    Bow.prototype.getBowTypes = function getBowTypes() {
+      var _this3 = this;
+
+      var self = this;
+      this.client.get("/bowtype", JSON.stringify(this.bow)).then(function (data) {
+        self.bowTypes = JSON.parse(data.response);
+      }).catch(function (error) {
+        if (error.status === 403) {
+          alert('Session timeout, please log in again');
+          _this3.store.clearStore();
+          _this3.router.navigateToRoute('login');
+        } else {
+          _this3.error = "An error occurred while retrieving list of bow types, please contact support or try again";
+        }
+      });
     };
 
     return Bow;
   }()) || _class);
 });
-define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common/shooting-log-store', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaRouter, _shootingLogStore, _aureliaEventAggregator) {
+define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common/shooting-log-store', 'aurelia-http-client', '../environment', 'aurelia-event-aggregator'], function (exports, _aureliaFramework, _aureliaRouter, _shootingLogStore, _aureliaHttpClient, _environment, _aureliaEventAggregator) {
   'use strict';
 
   Object.defineProperty(exports, "__esModule", {
@@ -265,6 +300,8 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
   exports.UpperValueConverter = exports.BowList = undefined;
 
   var _shootingLogStore2 = _interopRequireDefault(_shootingLogStore);
+
+  var _environment2 = _interopRequireDefault(_environment);
 
   function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
@@ -282,13 +319,19 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
 
   var BowList = exports.BowList = (_dec = (0, _aureliaFramework.inject)(_aureliaRouter.Router, _shootingLogStore2.default, _aureliaEventAggregator.EventAggregator), _dec(_class = function () {
     function BowList(_router, _data, _eventAggregator) {
+      var _this = this;
+
       _classCallCheck(this, BowList);
 
       this.heading = 'Your bows';
 
       this.appRouter = _router;
-      this.dataLayer = _data;
+      this.store = _data;
       this.eventAggregator = _eventAggregator;
+      this.client = new _aureliaHttpClient.HttpClient().configure(function (x) {
+        x.withBaseUrl(_environment2.default.API_URL);
+        x.withHeader('x-authorization', _this.store.authToken.token);
+      });
     }
 
     BowList.prototype.newBow = function newBow() {
@@ -300,13 +343,29 @@ define('bow/bow_list',['exports', 'aurelia-framework', 'aurelia-router', 'common
     };
 
     BowList.prototype.deleteBow = function deleteBow(bowId) {
-      if (confirm("Are you sure you want to delete t his bow?")) {
-        this.eventAggregator.publish('bow.delete', bowId._id);
-      }
+      if (confirm("Are you sure you want to delete t his bow?")) {}
     };
 
     BowList.prototype.activate = function activate() {
       this.eventAggregator.publish('viewActivate');
+      this.refreshBows();
+    };
+
+    BowList.prototype.refreshBows = function refreshBows() {
+      var _this2 = this;
+
+      var self = this;
+      this.client.get("/user/" + this.store.authToken.userId + "/bows").then(function (data) {
+        self.bows = JSON.parse(data.response);
+      }).catch(function (error) {
+        if (error.status === 403) {
+          alert('Session timeout, please log in again');
+          _this2.store.clearStore();
+          _this2.router.navigateToRoute('login');
+        } else {
+          _this2.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+      });
     };
 
     return BowList;
@@ -407,24 +466,18 @@ define('common/shooting-log-store',['exports', 'aurelia-framework', 'aurelia-fet
     };
 
     ShootingLogStore.prototype.handleViewActivate = function handleViewActivate() {
-      var self = this;
-      var user = this.getUserInSession();
-      this.getScorecard(user.userId).then(function (sc) {
-        self.scorecard = sc;
-        self.user = sc.user;
-      }).catch(function (e) {
-        self.errorMessage = e;
-      });
+      this.user = this.getUserInSession();
+      this.authToken = JSON.parse(sessionStorage.getItem('auth-token'));
     };
 
-    ShootingLogStore.prototype.handleUserAuthenticated = function handleUserAuthenticated(user) {
-      this.authToken = user.token;
-      sessionStorage.setItem('auth-token', JSON.stringify(user));
+    ShootingLogStore.prototype.handleUserAuthenticated = function handleUserAuthenticated(token) {
+      this.authToken = token;
+      sessionStorage.setItem('auth-token', JSON.stringify(token));
     };
 
     ShootingLogStore.prototype.handleLogout = function handleLogout() {
       this.user = null;
-      this.scorecard = {};
+      this.authToken = null;
     };
 
     ShootingLogStore.prototype.handleScorecardChanged = function handleScorecardChanged() {
@@ -613,7 +666,6 @@ define('common/shooting-log-store',['exports', 'aurelia-framework', 'aurelia-fet
       var usr = { isAuthenticated: false };
       if (auth != null) {
         usr.userId = auth.userId;
-        usr.roles = auth.roles;
         usr.isAuthenticated = true;
       }
       return usr;
@@ -1211,8 +1263,8 @@ define('resources/value-converters/dateFormatValueConverter',['exports', 'moment
 });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"resources/elements/nav-bar\"></require>\n  <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.css\">\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <div class=\"page-host\">\n    <router-view></router-view>\n  </div>\n\n  <footer class=\"container-fluid\">\n    <hr />\n    <div class=\"row\">\n      <div class=\"col-sm-6 col-md-6 text-left\"><span show.bind=\"store.user\">Logged In As: ${store.user.email}</span></div>\n      <div class=\"col-sm-6 col-md-6 text-right\"><span class=\"hidden-xs\">MyShootingLog by <a href=\"mailto:timothy.dewees@gmail.com\">Timothy DeWees</a></span></div>\n    </div>\n  </footer>\n\n</template>\n"; });
 define('text!welcome.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}</h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row\">\n        <div class=\"box\">\n          <h3>Dashboard:</h3>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Last Round</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Score</dt>\n                  <dd></dd>\n                  <dt>Ends</dt>\n                  <dd></dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">30 Day Stats (over ${last30Stats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${last30Stats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${last30Stats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${last30Stats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n          <div class=\"col-md-3\">\n            <div class=\"panel panel-default\">\n              <div class=\"panel-heading\">Lifetime Stats (over ${lifetimeStats.count} rounds)</div>\n              <div class=\"panel-body\">\n                <dl>\n                  <dt>Avg Score</dt>\n                  <dd>${lifetimeStats.averageRound}</dd>\n                  <dt>High Score</dt>\n                  <dd>${lifetimeStats.highRound}</dd>\n                  <dt>Low Score</dt>\n                  <dd>${lifetimeStats.lowRound}</dd>\n                </dl>\n              </div>\n              <div class=\"panel-footer\">details...</div>\n            </div>\n          </div>\n        </div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
-define('text!bow/bow.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <h2>${heading}</h2>\n    <form class=\"form-horizontal\" role=\"form\" submit.delegate=\"save()\">\n      <div class=\"form-group\">\n        <label for=\"name\">Name</label>\n        <input type=\"text\" value.bind=\"bow.name\" class=\"form-control\" id=\"name\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"type\">Type</label>\n        <select id=\"type\" value.bind=\"bow.type\" class=\"form-control\">\n          <option repeat.for=\"btype of bowTypes\" value.bind=\"btype\">${btype}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"make\">Make</label>\n        <input type=\"text\" value.bind=\"bow.make\" class=\"form-control\" id=\"make\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"model\">Model</label>\n        <input type=\"text\" value.bind=\"bow.model\" class=\"form-control\" id=\"model\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"poundage\">Poundage</label>\n        <input type=\"number\" value.bind=\"bow.poundage\" class=\"form-control\" id=\"poundage\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"amoLength\">AMO Length</label>\n        <input type=\"number\" value.bind=\"bow.amoLength\" class=\"form-control\" id=\"amoLength\" placeholder=\"\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"braceHeight\">Brace Height</label>\n        <input type=\"number\" value.bind=\"bow.braceHeight\" class=\"form-control\" id=\"braceHeight\" placeholder=\"\">\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Save</button>\n    </form>\n  </section>\n</template>\n"; });
-define('text!bow/bow_list.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}&nbsp;\n        <button class=\"fa fa-plus\" click.delegate=\"newBow()\">\n          <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> New Bow\n        </button>\n      </h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row hidden-xs\">\n        <div class=\"col-md-2 col-sm-2\"></div>\n        <div class=\"col-md-3 col-sm-3\"><strong>Name</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Type</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Make</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Model</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Poundage</strong></div>\n      </div>\n      <div class=\"row ${ $even ? 'even' :''}\" repeat.for=\"bow of dataLayer.scorecard.bows\">\n        <div class=\"col-md-2 col-sm-2\">\n          <button click.delegate=\"$parent.editBow(bow)\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button click.delegate=\"$parent.deleteBow(bow)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </div>\n        <div class=\"col-md-3 col-sm-3\"><strong class=\"visible-xs\">Name</strong>${bow.name}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Type</strong>${bow.type}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Make</strong>${bow.make}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Model</strong>${bow.model}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Poundage</strong>${bow.poundage}</div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
+define('text!bow/bow.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <h2>${heading}</h2>\n    <form class=\"form-horizontal\" role=\"form\" submit.delegate=\"save()\">\n      <div class=\"form-group\">\n        <label for=\"name\">Name</label>\n        <input type=\"text\" value.bind=\"bow.name\" class=\"form-control\" id=\"name\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"type\">Type</label>\n        <select id=\"type\" value.bind=\"bow.bow_type\" class=\"form-control\">\n          <option repeat.for=\"btype of bowTypes\" value.bind=\"btype.id\">${btype.name}</option>\n        </select>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"make\">Make</label>\n        <input type=\"text\" value.bind=\"bow.make\" class=\"form-control\" id=\"make\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"model\">Model</label>\n        <input type=\"text\" value.bind=\"bow.model\" class=\"form-control\" id=\"model\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"poundage\">Poundage</label>\n        <input type=\"number\" value.bind=\"bow.poundage\" class=\"form-control\" id=\"poundage\" placeholder=\"\" required>\n      </div>\n      <div class=\"form-group\">\n        <label for=\"amoLength\">AMO Length</label>\n        <input type=\"number\" value.bind=\"bow.amo_length\" class=\"form-control\" id=\"amoLength\" placeholder=\"\">\n      </div>\n      <div class=\"form-group\">\n        <label for=\"braceHeight\">Brace Height</label>\n        <input type=\"number\" value.bind=\"bow.brace_height\" class=\"form-control\" id=\"braceHeight\" placeholder=\"\">\n      </div>\n      <button type=\"submit\" class=\"btn btn-default\">Save</button>\n    </form>\n  </section>\n</template>\n"; });
+define('text!bow/bow_list.html', ['module'], function(module) { module.exports = "<template>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}&nbsp;\n        <button class=\"fa fa-plus\" click.delegate=\"newBow()\">\n          <span class=\"glyphicon glyphicon-plus\" aria-hidden=\"true\"></span> New Bow\n        </button>\n      </h2>\n    </div>\n    <div class=\"container-fluid\">\n      <div class=\"row hidden-xs\">\n        <div class=\"col-md-2 col-sm-2\"></div>\n        <div class=\"col-md-3 col-sm-3\"><strong>Name</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Type</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Make</strong></div>\n        <div class=\"col-md-1 col-sm-2\"><strong>Model</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Poundage</strong></div>\n      </div>\n      <div class=\"row ${ $even ? 'even' :''}\" repeat.for=\"bow of bows\">\n        <div class=\"col-md-2 col-sm-2\">\n          <button click.delegate=\"$parent.editBow(bow)\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button click.delegate=\"$parent.deleteBow(bow)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </div>\n        <div class=\"col-md-3 col-sm-3\"><strong class=\"visible-xs\">Name</strong>${bow.name}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Type</strong>${bow.bow_type_name}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Make</strong>${bow.make}</div>\n        <div class=\"col-md-1 col-sm-2\"><strong class=\"visible-xs\">Model</strong>${bow.model}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Poundage</strong>${bow.poundage}</div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!round/round.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../resources/value-converters/dateFormatValueConverter\"></require>\n  <section class=\"au-animate container-fluid\">\n    <form class=\"form-horizontal\" role=\"form\" submit.delegate=\"save()\">\n      <fieldset>\n        <legend>${heading}</legend>\n        <div class=\"form-group\">\n          <label for=\"recordedDate\">Round Date</label>\n          <input type=\"date\" message=\"roundDate.send\" value.bind=\"round.recordedDate | dateFormat: 'YYYY-MM-DD'\" class=\"form-control\" id=\"recordedDate\" placeholder=\"\" required />\n        </div>\n        <div class=\"form-group\">\n          <label for=\"type\">Round Type</label>\n          <select id=\"type\" class=\"form-control\" value.bind=\"round.roundType\" required>\n            <option repeat.for=\"type of roundTypes\" model.bind=\"type\">${type}</option>\n          </select>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"bow\">Bow</label>\n          <select id=\"bow\" class=\"form-control\" value.bind=\"round.bowName\" required>\n            <option repeat.for=\"bow of store.scorecard.bows\" model.bind=\"bow.name\">${bow.name}</option>\n          </select>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"notes\">Notes</label>\n          <textarea id=\"notes\" class=\"form-control\" value.bind=\"round.notes\" rows=\"7\" cols=\"50\"></textarea>\n        </div>\n        <div class=\"form-group\">\n          <label for=\"score\">Round Score</label>\n          <input type=\"number\" value.bind=\"round.score\" class=\"form-control\" id=\"score\" placeholder=\"\" />\n        </div>\n        <div class=\"form-group\">\n          <div class=\"row\">\n            <div class=\"col-md-2 col-sm-2\"><strong>Add New End:</strong></div>\n            <div class=\"col-md-3 col-sm-4\"><input type=\"number\" value.bind=\"newEndScore\" placeholder=\"End Score\" /><button click.delegate=\"addEnd()\"><span class=\"glyphicon glyphicon-plus\"></span></button></div>\n          </div>\n          <div class=\"row hidden-xs\">\n            <div class=\"col-md-1 col-sm-1\"></div>\n            <div class=\"col-md-1 col-sm-1\"><strong>End#</strong></div>\n            <div class=\"col-md-2 col-sm-3\"><strong>Score</strong></div>\n          </div>\n          <div class=\"row\" repeat.for=\"end of round.ends\">\n            <div class=\"col-md-1 col-sm-1\">\n              <button click.delegate=\"$parent.deleteEnd(end)\">\n                <span class=\"glyphicon glyphicon-trash\"></span>\n              </button>\n            </div>\n            <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">End#</strong>${end.number}</div>\n            <div class=\"col-md-2 col-sm-2\"><strong class=\"visible-xs\">Score</strong><input type=\"number\" value.bind=\"end.score\" change.delegate=\"$parent.endChanged()\" class=\"form-control\" id=\"end_${end.number}\" /></div>\n          </div>\n        </div>\n        <button type=\"submit\" class=\"btn btn-default\">Save</button>\n      </fieldset>\n    </form>\n  </section>\n</template>\n"; });
 define('text!round/scorecard.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"../resources/value-converters/dateFormatValueConverter\"></require>\n  <section class=\"au-animate container-fluid\">\n    <div class=\"page-header\">\n      <h2>${heading}&nbsp;\n        <button click.delegate=\"newRound()\">\n          <span class=\"glyphicon glyphicon-screenshot\" aria-hidden=\"true\"></span> New Round\n        </button>\n      </h2>\n    </div>\n    <p class=\"bg-danger\" show.bind=\"errorMessage\" >${errorMessage}</p>\n    <div class=\"container-fluid\">\n      <div class=\"row hidden-xs\">\n        <div class=\"col-md-2 col-sm-2\"></div>\n        <div class=\"col-md-2 col-sm-2\"><strong>Date</strong></div>\n        <div class=\"col-md-2 col-sm-2\"><strong>Type</strong></div>\n        <div class=\"col-md-2 col-sm-2\"><strong>Bow</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Score</strong></div>\n        <div class=\"col-md-1 col-sm-1\"><strong>Ends</strong></div>\n      </div>\n      <div class=\"row ${ $even ? 'even' :''}\" repeat.for=\"round of dataLayer.scorecard.rounds\">\n        <div class=\"col-md-2 col-sm-2\">\n          <button click.delegate=\"$parent.editRound(round)\"><span class=\"glyphicon glyphicon-pencil\"></span></button>\n          <button click.delegate=\"$parent.deleteRound(round)\"><span class=\"glyphicon glyphicon-trash\"></span></button>\n        </div>\n        <div class=\"col-md-2 col-sm-2\"><strong class=\"visible-xs\">Date</strong>${round.recordedDate | dateFormat: 'YYYY-MM-DD'}</div>\n        <div class=\"col-md-2 col-sm-2\"><strong class=\"visible-xs\">Type</strong>${round.roundType}</div>\n        <div class=\"col-md-2 col-sm-2\"><strong class=\"visible-xs\">Bow</strong>${round.bowName}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Score</strong>${round.score}</div>\n        <div class=\"col-md-1 col-sm-1\"><strong class=\"visible-xs\">Ends</strong>${round.ends.length}</div>\n      </div>\n    </div>\n  </section>\n</template>\n"; });
 define('text!user/login.html', ['module'], function(module) { module.exports = "<template>\n    <div class=\"container\">\n        <div class=\"row\">\n            <div class=\"box\">\n                <div class=\"col-lg-12\">\n                    <div class=\"jumbotron\">\n                        <h1>My Shooting Log</h1>\n                        <p>Login to your account below or create an account and join the family <a route-href=\"route: register\" class=\"btn btn-primary btn-md\">register</a></p>\n                    </div>\n                    <form id=\"loginForm\">\n                        <div class=\"col-md-3\">\n                            <div class=\"panel panel-default\">\n                                <div class=\"panel-heading\">Please login</div>\n                                <div class=\"panel-body\">\n                                    <fieldset class=\"form-group\">\n                                        <label for=\"email\">Email:</label>\n                                        <input type=\"text\" class=\"form-control\" id=\"email\" value.bind=\"user.email\" />\n                                    </fieldset>\n                                    <fieldset class=\"form-group\">\n                                        <label for=\"password\">Password:</label>\n                                        <input type=\"password\" class=\"form-control\" id=\"password\" value.bind=\"user.password\" />\n                                    </fieldset>\n                                    <p class=\"bg-danger\" show.bind=\"errorMessage\" >${errorMessage}</p>\n                                </div>\n                                <div class=\"panel-footer\">\n                                    <button type=\"submit\" class=\"btn btn-primary\" click.delegate=\"loginUser()\">Login</button>\n                                </div>\n                            </div>\n                        </div>\n                        <div class=\"col-md-9\">\n                            <img src=\"/content/img/hero.jpg\" class=\"img-responsive img-rounded\" />\n                        </div>\n                    </form>\n                </div>\n            </div>\n        </div>\n    </div>\n</template>\n"; });
