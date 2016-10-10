@@ -76,17 +76,14 @@
     },
     "bundles": [
       {
-        "name": "app-bundle.js",
-        "source": [
-          "[**/*.js]",
-          "**/*.{css,html}"
-        ]
-      },
-      {
-        "name": "vendor-bundle.js",
+        "name": "scorecard.js",
         "prepend": [
           "node_modules/bluebird/js/browser/bluebird.core.js",
           "scripts/require.js"
+        ],
+        "source": [
+          "[**/*.js]",
+          "**/*.{css,html}"
         ],
         "dependencies": [
           "jquery",
