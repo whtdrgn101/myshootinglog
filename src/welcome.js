@@ -15,10 +15,12 @@ export class Welcome {
     this.router = router;
     this.store = store;
     this.eventAggregator = eventAggregator;
-    this.client = new HttpClient().configure(x => {
-      x.withBaseUrl(environment.API_URL);
-      x.withHeader('x-authorization',this.store.authToken.token);
-    });
+    if(this.store.authToken) {
+      this.client = new HttpClient().configure(x => {
+        x.withBaseUrl(environment.API_URL);
+        x.withHeader('x-authorization',this.store.authToken.token);
+      });  
+    }
   }
 
   activate(parms, routeConfig) {
