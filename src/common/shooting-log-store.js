@@ -81,6 +81,7 @@ export default class ShootingLogStore {
   handleUserAuthenticated(token) {
     this.authToken = token;
     sessionStorage.setItem('auth-token', JSON.stringify(token));
+    this.saveStore();
   }
 
   handleLogout() {
@@ -291,6 +292,10 @@ export default class ShootingLogStore {
       usr.isAuthenticated = true;
     }
     return usr;
+  }
+
+  saveStore() {
+    sessionStorage.store = JSON.stringify(this);
   }
 
   /**

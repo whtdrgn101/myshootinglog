@@ -16,18 +16,16 @@
         <div class="col-md-2 col-sm-2"><strong>Type</strong></div>
         <div class="col-md-2 col-sm-2"><strong>Bow</strong></div>
         <div class="col-md-1 col-sm-1"><strong>Score</strong></div>
-        <div class="col-md-1 col-sm-1"><strong>Ends</strong></div>
       </div>
-      <div class="row ${ $even ? 'even' :''}" repeat.for="round of dataLayer.scorecard.rounds">
+      <div class="row ${ $even ? 'even' :''}" repeat.for="round of rounds">
         <div class="col-md-2 col-sm-2">
           <button click.delegate="$parent.editRound(round)"><span class="glyphicon glyphicon-pencil"></span></button>
           <button click.delegate="$parent.deleteRound(round)"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
-        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Date</strong>${round.recordedDate | dateFormat: 'YYYY-MM-DD'}</div>
-        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Type</strong>${round.roundType}</div>
-        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Bow</strong>${round.bowName}</div>
-        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Score</strong>${round.score}</div>
-        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Ends</strong>${round.ends.length}</div>
+        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Date</strong>${round.round_date | dateFormat: 'YYYY-MM-DD'}</div>
+        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Type</strong>${round.round_type_name}</div>
+        <div class="col-md-2 col-sm-2"><strong class="visible-xs">Bow</strong>${round.bow_name}</div>
+        <div class="col-md-1 col-sm-1"><strong class="visible-xs">Score</strong>${round.total_score}</div>
       </div>
     </div>
   </section>

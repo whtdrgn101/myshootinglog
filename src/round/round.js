@@ -3,6 +3,8 @@ import {Router} from 'aurelia-router';
 import Store from 'common/shooting-log-store';
 import {EventAggregator} from 'aurelia-event-aggregator';
 import _ from 'underscore';
+import environment from '../environment';
+import {HttpClient} from 'aurelia-http-client';
 
 @inject(Router, Store, EventAggregator)
 export class Round {
@@ -17,6 +19,7 @@ export class Round {
     'Other'
   ];
   newEndScore = 30;
+  newArrowCount = 3;
   round = {};
   
   constructor(router, _store, _EventAggregator){
@@ -30,28 +33,56 @@ export class Round {
     this.eventAggregator.subscribe('round.ends.change', payload => {
       self.handleRoundEndsChange(payload);
     });
+    this.client = new HttpClient().configure(x => {
+      x.withBaseUrl(environment.API_URL);
+      x.withHeader('x-authorization',this.store.authToken.token);
+    });
     
   }
 
   activate(parms, routeConfig) {
     this.eventAggregator.publish('viewActivate');
     var self = this;
-    if(parms.id != undefined && parms.id !== "-1") {
-      this.store.getRound(parms.id).then(function(r){
-        self.round = r;
+    this.client.get("/user/" + this.store.authToken.userId + "/bows")
+      .then(data => {
+        self.bows = JSON.parse(data.response);
+        return self.client.get("/roundtype");
+      })
+      .then(results => {
+        self.roundTypes = JSON.parse(results.response);
+        if(parms.id != undefined && parms.id !== "-1") {
+          this.client.get("/round/" + parms.id)
+            .then(data => {
+              self.round = JSON.parse(data.response);
+            });
+        } else {
+          self.round = {
+            round_date: new Date(),
+            total_score: 30,
+            ends: [{end_number:1, end_score:30, arrow_count: 3}]
+          }
+          if(self.bows.length > 0) {
+            self.round.bow_id = self.bows[0].id;
+          }
+          if(self.roundTypes.length > 0) {
+            self.round.round_type = self.roundTypes[0].id;
+          }
+        }
+      })
+      .catch(error => {
+        if(error.status === 403) {
+          alert('Session timeout, please log in again');
+          this.store.clearStore();
+          this.router.navigateToRoute('login');
+        } else {
+          this.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+
       });
-    } else {
-      this.round = {
-        recordedDate: new Date(),
-        score: 30,
-        bowId: 1,
-        ends: [{number:1, score:30}]
-      }
-    }
   }
 
   addEnd() {
-    this.round.ends.push({number:this.round.ends.length + 1, score:this.newEndScore});
+    this.round.ends.push({end_number:this.round.ends.length + 1, arrow_count: this.newArrowCount, end_score:this.newEndScore});
     this.eventAggregator.publish('round.ends.change', true);
   }
   
@@ -62,7 +93,7 @@ export class Round {
     }
     var roundNumber = 1;
     this.round.ends.forEach(function(end){
-      end.number = roundNumber++;
+      end.end_number = roundNumber++;
     })
     this.eventAggregator.publish('round.ends.change', true);
   }
@@ -72,29 +103,60 @@ export class Round {
   }
   
   save() {
-    this.round.roundScore = this.calculateRoundScore(this.round);
+    this.round.total_score = this.calculateRoundScore(this.round);
     
-    if(this.round._id === undefined)
+    if(this.round.id === undefined)
     {
-      this.eventAggregator.publish('round.add', this.round);
+      this.addRound();
     } else {
-      this.eventAggregator.publish('round.update',this.round);
+      this.updateRound();
     }
-    this.appRouter.navigateBack();
   }
 
-  handleDateChange(date) {
-    if(this.round.recordedDate != date)
-      this.round.recordedDate = date;
+  addRound() {
+    this.round.member_id =   this.store.authToken.userId;
+    this.client.post("/round", JSON.stringify(this.round))
+      .then(data => {
+        self.round = JSON.parse(data.response);
+        this.appRouter.navigateBack();
+      })
+      .catch(error => {
+        if(error.status === 403) {
+          alert('Session timeout, please log in again');
+          this.store.clearStore();
+          this.router.navigateToRoute('login');
+        } else {
+          this.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+
+      });
   }
-  
+
+  updateRound() {
+    this.client.put("/round/" + this.round.id, JSON.stringify(this.round))
+      .then(data => {
+        self.round = JSON.parse(data.response);
+        this.appRouter.navigateBack();
+      })
+      .catch(error => {
+        if(error.status === 403) {
+          alert('Session timeout, please log in again');
+          this.store.clearStore();
+          this.router.navigateToRoute('login');
+        } else {
+          this.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
+
+      });
+  }
+
   handleRoundEndsChange(action, end) {
-    this.round.score = this.calculateRoundScore(this.round);
+    this.round.total_score = this.calculateRoundScore(this.round);
   }
   
   calculateRoundScore(_round) {
     var scores = _.map(_round.ends, function(end) {
-      return Number(end.score);
+      return Number(end.end_score);
     });
     return scores.reduce(
       function(total, num){ return ((num)?(total + num):0) }
