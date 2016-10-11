@@ -1,4 +1,5 @@
 <template>
+  <require from="../resources/value-converters/dateFormatValueConverter"></require>
   <section class="au-animate">
     <div class="box">
       <div class="row">
@@ -7,20 +8,20 @@
       </div>
       <div class="row">
         <div class="col-md-3">
-          <img src.bind="store.user.image" />
+          <img src.bind="user.profile_pic" />
           <input type="file" accept="image/*" files.bind="file" change.delegate="embedFile()">
 
         </div>
         <div class="col-md-6">
           <dl>
             <dt>Login</dt>
-            <dd>${store.user.email}</dd>
+            <dd>${user.email}</dd>
             <dt>Member Since</dt>
-            <dd>${store.user.member-since}</dd>
+            <dd>${user.created_date | dateFormat: 'YYYY-MM-DD'}</dd>
             <dt>Name</dt>
-            <dd><input type="text" value.bind="store.user.name"></dd>
+            <dd><input type="text" value.bind="user.name"></dd>
             <dt>Location</dt>
-            <dd><input type="text" value.bind="store.user.location"></dd>
+            <dd><input type="text" value.bind="user.location"></dd>
             <dt>Most used bows:</dt>
             <dd></dd>
             <dt>Highest Lifetime Round Score:</dt>
