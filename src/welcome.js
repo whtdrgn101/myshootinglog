@@ -10,7 +10,8 @@ export class Welcome {
   heading = 'Welcome to MyShootingLog!';
   last30Stats = {};
   lifetimeStats = {};
-
+  lastRoundStats = {};
+  
   constructor(router, store, eventAggregator) {
     this.router = router;
     this.store = store;
@@ -27,6 +28,7 @@ export class Welcome {
     this.eventAggregator.publish('viewActivate');
     this.getLifetimeStats();
     this.getLast30Stats();
+    this.getLastRoundStats();
 
   }
 
@@ -63,11 +65,27 @@ export class Welcome {
 
       });
   }
-  get latestRound() {
+  getLastRoundStats() {
+    var self = this;
+    this.client.get("/stats/" + this.store.authToken.userId + "/last")
+      .then(data => {
+        self.lastRoundStats = JSON.parse(data.response);
+      })
+      .catch(error => {
+        if(error.status === 403) {
+          alert('Session timeout, please log in again');
+          this.router.navigateToRoute('login');
+        } else {
+          this.error = "An error occurred while retrieving the job list, please contact support or try again";
+        }
 
+      });
   }
 
-  get mostUsedBow() {
-
+  get lastRoundId() {
+    if(this.lastRoundStats)
+      return this.lastRoundStats.id;
+    else
+      return 0;
   }
 }

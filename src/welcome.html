@@ -12,13 +12,23 @@
               <div class="panel-heading">Last Round</div>
               <div class="panel-body">
                 <dl>
+                  <dt>Type</dt>
+                  <dd>${lastRoundStats.round_type_name}</dd>
+                  <dt>Bow</dt>
+                  <dd>${lastRoundStats.bow_name}</dd>
                   <dt>Score</dt>
-                  <dd></dd>
-                  <dt>Ends</dt>
-                  <dd></dd>
+                  <dd>${lastRoundStats.total_score}</dd>
+                  <dt>High End</dt>
+                  <dd>${lastRoundStats.highest_end}</dd>
+                  <dt>Low End</dt>
+                  <dd>${lastRoundStats.lowest_end}</dd>
+                  <dt>Avg End</dt>
+                  <dd>${lastRoundStats.average_end}</dd>
+                  <dt>Avg Points p/Arrow</dt>
+                  <dd>${lastRoundStats.average_point_per_arrow}</dd>
                 </dl>
               </div>
-              <div class="panel-footer">details...</div>
+              <div class="panel-footer"><a href="/#/round?id=${lastRoundId}">details</a></div>
             </div>
           </div>
           <div class="col-md-3">
