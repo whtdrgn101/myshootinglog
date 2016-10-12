@@ -8,8 +8,8 @@ import {HttpClient} from 'aurelia-http-client';
 @inject(Router, Store, EventAggregator)
 export class Welcome {
   heading = 'Welcome to MyShootingLog!';
-  last30Stats = {};
-  lifetimeStats = {};
+  last30Stats = [];
+  lifetimeStats = [];
   lastRoundStats = {};
   
   constructor(router, store, eventAggregator) {

@@ -4,80 +4,92 @@
       <h2>${heading}</h2>
     </div>
     <div class="container-fluid">
-      <div class="row">
         <div class="box">
-          <h3>Dashboard:</h3>
-          <div class="col-md-3">
+        <h3>Dashboard:</h3>
             <div class="panel panel-default">
               <div class="panel-heading">Last Round</div>
               <div class="panel-body">
-                <dl>
-                  <dt>Type</dt>
-                  <dd>${lastRoundStats.round_type_name}</dd>
-                  <dt>Bow</dt>
-                  <dd>${lastRoundStats.bow_name}</dd>
-                  <dt>Score</dt>
-                  <dd>${lastRoundStats.total_score}</dd>
-                  <dt>High End</dt>
-                  <dd>${lastRoundStats.highest_end}</dd>
-                  <dt>Low End</dt>
-                  <dd>${lastRoundStats.lowest_end}</dd>
-                  <dt>Avg End</dt>
-                  <dd>${lastRoundStats.average_end}</dd>
-                  <dt>Avg Points p/Arrow</dt>
-                  <dd>${lastRoundStats.average_point_per_arrow}</dd>
-                </dl>
+                <div class="row hidden-xs">
+                  <div class="col-sm-1 col-md-1"><strong>Type</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Bow</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>High End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Low End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Avg End</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Avg Points p/Arrow</strong></div>
+                </div>
+                <div class="row">
+                  <div class="col-sm-1 col-md-1">${lastRoundStats.round_type_name}</div>
+                  <div class="col-sm-2 col-md-2">${lastRoundStats.bow_name}</div>
+                  <div class="col-sm-1 col-md-1">${lastRoundStats.total_score}</div>
+                  <div class="col-sm-1 col-md-1">${lastRoundStats.highest_end}</div>
+                  <div class="col-sm-1 col-md-1">${lastRoundStats.lowest_end}</div>
+                  <div class="col-sm-1 col-md-1">${lastRoundStats.average_end}</div>
+                  <div class="col-sm-2 col-md-2">${lastRoundStats.average_point_per_arrow}</div>
+                </div>
               </div>
               <div class="panel-footer"><a href="/#/round?id=${lastRoundId}">details</a></div>
             </div>
           </div>
-          <div class="col-md-3">
             <div class="panel panel-default">
-              <div class="panel-heading">30 Day Stats (over ${last30Stats.total_rounds} rounds)</div>
+              <div class="panel-heading">30 Day Stats</div>
               <div class="panel-body">
-                <dl>
-                  <dt>Avg Score</dt>
-                  <dd>${last30Stats.average_round}</dd>
-                  <dt>High Score</dt>
-                  <dd>${last30Stats.highest_round}</dd>
-                  <dt>Low Score</dt>
-                  <dd>${last30Stats.lowest_round}</dd>
-                  <dt>Avg End</dt>
-                  <dd>${last30Stats.average_end}</dd>
-                  <dt>High End</dt>
-                  <dd>${last30Stats.highest_end}</dd>
-                  <dt>Low End</dt>
-                  <dd>${last30Stats.lowest_end}</dd>
-                  <dt>Avg Points p/Arrow</dt>
-                  <dd>${last30Stats.average_point_per_arrow}</dd>
-                </dl>
+                <div class="row hidden-xs">
+                  <div class="col-sm-1 col-md-1"><strong>Count</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Type</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Bow</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Avg Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>High Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Low Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Avg End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>High End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Low End</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Avg Points p/Arrow</strong></div>
+                </div>
+                <div class="row ${ $even ? 'even' :''}" repeat.for="stat of last30Stats">
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Count</strong>${stat.total_rounds}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Type</strong>${stat.round_type_name}</div>
+                  <div class="col-sm-2 col-md-2"><strong class="visible-xs">Bow</strong>${stat.bow_name}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Avg Score</strong>${stat.average_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">High Score</strong>${stat.highest_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Low Score</strong>${stat.lowest_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Avg End</strong>${stat.average_end}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">High End</strong>${stat.highest_end}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Low End</strong>${stat.lowest_end}</div>
+                  <div class="col-sm-2 col-md-2"><strong class="visible-xs">Avg Points p/Arrow</strong>${stat.average_point_per_arrow}</div>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-md-3">
             <div class="panel panel-default">
-              <div class="panel-heading">Lifetime Stats (over ${lifetimeStats.total_rounds} rounds)</div>
+              <div class="panel-heading">Lifetime Stats</div>
               <div class="panel-body">
-                <dl>
-                  <dt>Avg Score</dt>
-                  <dd>${lifetimeStats.average_round}</dd>
-                  <dt>High Score</dt>
-                  <dd>${lifetimeStats.highest_round}</dd>
-                  <dt>Low Score</dt>
-                  <dd>${lifetimeStats.lowest_round}</dd>
-                  <dt>Avg End</dt>
-                  <dd>${lifetimeStats.average_end}</dd>
-                  <dt>High End</dt>
-                  <dd>${lifetimeStats.highest_end}</dd>
-                  <dt>Low End</dt>
-                  <dd>${lifetimeStats.lowest_end}</dd>
-                  <dt>Avg Points p/Arrow</dt>
-                  <dd>${lifetimeStats.average_point_per_arrow}</dd>
-                </dl>
+                <div class="row hidden-xs">
+                  <div class="col-sm-1 col-md-1"><strong>Count</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Type</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Bow</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Avg Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>High Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Low Score</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Avg End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>High End</strong></div>
+                  <div class="col-sm-1 col-md-1"><strong>Low End</strong></div>
+                  <div class="col-sm-2 col-md-2"><strong>Avg Points p/Arrow</strong></div>
+                </div>
+                <div class="row ${ $even ? 'even' :''}" repeat.for="stat of lifetimeStats">
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Count</strong>${stat.total_rounds}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Type</strong>${stat.round_type_name}</div>
+                  <div class="col-sm-2 col-md-2"><strong class="visible-xs">Bow</strong>${stat.bow_name}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Avg Score</strong>${stat.average_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">High Score</strong>${stat.highest_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Low Score</strong>${stat.lowest_round}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Avg End</strong>${stat.average_end}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">High End</strong>${stat.highest_end}</div>
+                  <div class="col-sm-1 col-md-1"><strong class="visible-xs">Low End</strong>${stat.lowest_end}</div>
+                  <div class="col-sm-2 col-md-2"><strong class="visible-xs">Avg Points p/Arrow</strong>${stat.average_point_per_arrow}</div>
+                </div>
+              </div>
               </div>
             </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
