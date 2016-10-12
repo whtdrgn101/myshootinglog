@@ -8,6 +8,7 @@ import {HttpClient} from 'aurelia-http-client';
 @inject(Router, ShootingLogStore, EventAggregator)
 export class Profile {
 
+  heading = "User Profile";
   file;
   user;
   
