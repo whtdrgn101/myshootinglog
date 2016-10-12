@@ -1,57 +1,61 @@
 <template>
   <require from="../resources/value-converters/dateFormatValueConverter"></require>
   <section class="au-animate container-fluid">
-    <form class="form-horizontal" role="form" submit.delegate="save()">
-      <fieldset>
-        <legend>${heading}</legend>
-        <div class="form-group">
-          <label for="round_date">Round Date</label>
-          <input type="date" value.bind="round.round_date | dateFormat: 'YYYY-MM-DD'" class="form-control" id="round_date" placeholder="" required />
-        </div>
-        <div class="form-group">
-          <label for="type">Round Type</label>
-          <select id="type" class="form-control" value.bind="round.round_type" required>
-            <option repeat.for="type of roundTypes" model.bind="type.id">${type.name}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="bow">Bow</label>
-          <select id="bow" class="form-control" value.bind="round.bow_id" required>
-            <option repeat.for="bow of bows" model.bind="bow.id">${bow.name}</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="notes">Notes</label>
-          <textarea id="notes" class="form-control" value.bind="round.notes" rows="7" cols="50"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="score">Round Score</label>
-          <input type="number" value.bind="round.total_score" class="form-control" id="score" placeholder="" />
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <div class="col-md-2 col-sm-2"><strong>Add New End:</strong></div>
-            <div class="col-md-8 col-sm-8">Arrows: <input type="number" value.bind="newArrowCount" placeholder="Arrow Count" /> Score: <input type="number" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></div>
+    <div class="page-header">
+      <h2>${heading}</h2>
+    </div>
+    <div class="container-fluid">
+      <form class="form-horizontal" role="form" submit.delegate="save()">
+        <fieldset>
+          <div class="form-group">
+            <label for="round_date">Round Date</label>
+            <input type="date" value.bind="round.round_date | dateFormat: 'YYYY-MM-DD'" class="form-control" id="round_date" placeholder="" required />
           </div>
-          <div class="row hidden-xs">
-            <div class="col-md-1 col-sm-1"></div>
-            <div class="col-md-1 col-sm-1"><strong>End#</strong></div>
-            <div class="col-md-1 col-sm-1"><strong>Arrows</strong></div>
-            <div class="col-md-2 col-sm-3"><strong>Score</strong></div>
+          <div class="form-group">
+            <label for="type">Round Type</label>
+            <select id="type" class="form-control" value.bind="round.round_type" required>
+              <option repeat.for="type of roundTypes" model.bind="type.id">${type.name}</option>
+            </select>
           </div>
-          <div class="row" repeat.for="end of round.ends">
-            <div class="col-md-1 col-sm-1">
-              <button click.delegate="$parent.deleteEnd(end)">
-                <span class="glyphicon glyphicon-trash"></span>
-              </button>
+          <div class="form-group">
+            <label for="bow">Bow</label>
+            <select id="bow" class="form-control" value.bind="round.bow_id" required>
+              <option repeat.for="bow of bows" model.bind="bow.id">${bow.name}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" class="form-control" value.bind="round.notes" rows="7" cols="50"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="score">Round Score</label>
+            <input type="number" value.bind="round.total_score" class="form-control" id="score" placeholder="" />
+          </div>
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-2 col-sm-2"><strong>Add New End:</strong></div>
+              <div class="col-md-8 col-sm-8">Arrows: <input type="number" value.bind="newArrowCount" placeholder="Arrow Count" /> Score: <input type="number" value.bind="newEndScore" placeholder="End Score" /><button click.delegate="addEnd()"><span class="glyphicon glyphicon-plus"></span></button></div>
             </div>
-            <div class="col-md-1 col-sm-1"><strong class="visible-xs">End#</strong>${end.end_number}</div>
-            <div class="col-md-1 col-sm-1"><strong class="visible-xs">Arrows</strong><input type="number" value.bind="end.arrow_count" change.delegate="$parent.endChanged()" class="form-control" id="end_ac_${end.end_number}" /></div>
-            <div class="col-md-2 col-sm-2"><strong class="visible-xs">Score</strong><input type="number" value.bind="end.end_score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.end_number}" /></div>
+            <div class="row hidden-xs">
+              <div class="col-md-1 col-sm-1"></div>
+              <div class="col-md-1 col-sm-1"><strong>End#</strong></div>
+              <div class="col-md-1 col-sm-1"><strong>Arrows</strong></div>
+              <div class="col-md-2 col-sm-3"><strong>Score</strong></div>
+            </div>
+            <div class="row" repeat.for="end of round.ends">
+              <div class="col-md-1 col-sm-1">
+                <button click.delegate="$parent.deleteEnd(end)">
+                  <span class="glyphicon glyphicon-trash"></span>
+                </button>
+              </div>
+              <div class="col-md-1 col-sm-1"><strong class="visible-xs">End#</strong>${end.end_number}</div>
+              <div class="col-md-1 col-sm-1"><strong class="visible-xs">Arrows</strong><input type="number" value.bind="end.arrow_count" change.delegate="$parent.endChanged()" class="form-control" id="end_ac_${end.end_number}" /></div>
+              <div class="col-md-2 col-sm-2"><strong class="visible-xs">Score</strong><input type="number" value.bind="end.end_score" change.delegate="$parent.endChanged()" class="form-control" id="end_${end.end_number}" /></div>
+            </div>
           </div>
-        </div>
-        <button type="submit" class="btn btn-default">Save</button>
-      </fieldset>
-    </form>
+          <button type="submit" class="btn btn-default">Save</button>
+        </fieldset>
+      </form>
+    </div>
   </section>
 </template>

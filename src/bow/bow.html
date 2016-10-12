@@ -1,38 +1,44 @@
 <template>
   <section class="au-animate container-fluid">
-    <h2>${heading}</h2>
-    <form class="form-horizontal" role="form" submit.delegate="save()">
-      <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" value.bind="bow.name" class="form-control" id="name" placeholder="" required>
-      </div>
-      <div class="form-group">
-        <label for="type">Type</label>
-        <select id="type" value.bind="bow.bow_type" class="form-control">
-          <option repeat.for="btype of bowTypes" value.bind="btype.id">${btype.name}</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="make">Make</label>
-        <input type="text" value.bind="bow.make" class="form-control" id="make" placeholder="" required>
-      </div>
-      <div class="form-group">
-        <label for="model">Model</label>
-        <input type="text" value.bind="bow.model" class="form-control" id="model" placeholder="" required>
-      </div>
-      <div class="form-group">
-        <label for="poundage">Poundage</label>
-        <input type="number" value.bind="bow.poundage" class="form-control" id="poundage" placeholder="" required>
-      </div>
-      <div class="form-group">
-        <label for="amoLength">AMO Length</label>
-        <input type="number" value.bind="bow.amo_length" class="form-control" id="amoLength" placeholder="">
-      </div>
-      <div class="form-group">
-        <label for="braceHeight">Brace Height</label>
-        <input type="number" value.bind="bow.brace_height" class="form-control" id="braceHeight" placeholder="">
-      </div>
-      <button type="submit" class="btn btn-default">Save</button>
-    </form>
+    <div class="page-header">
+      <h2>${heading}</h2>
+    </div>
+    <div class="container-fluid">
+      <form class="form-horizontal" role="form" submit.delegate="save()">
+        <fieldset>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" value.bind="bow.name" class="form-control" id="name" placeholder="" required>
+          </div>
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" value.bind="bow.bow_type" class="form-control">
+              <option repeat.for="btype of bowTypes" value.bind="btype.id">${btype.name}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="make">Make</label>
+            <input type="text" value.bind="bow.make" class="form-control" id="make" placeholder="" required>
+          </div>
+          <div class="form-group">
+            <label for="model">Model</label>
+            <input type="text" value.bind="bow.model" class="form-control" id="model" placeholder="" required>
+          </div>
+          <div class="form-group">
+            <label for="poundage">Poundage</label>
+            <input type="number" value.bind="bow.poundage" class="form-control" id="poundage" placeholder="" required>
+          </div>
+          <div class="form-group">
+            <label for="amoLength">AMO Length</label>
+            <input type="number" value.bind="bow.amo_length" class="form-control" id="amoLength" placeholder="">
+          </div>
+          <div class="form-group">
+            <label for="braceHeight">Brace Height</label>
+            <input type="number" value.bind="bow.brace_height" class="form-control" id="braceHeight" placeholder="">
+          </div>
+          <button type="submit" class="btn btn-default">Save</button>
+        </fieldset>
+      </form>
+    </div>
   </section>
 </template>
