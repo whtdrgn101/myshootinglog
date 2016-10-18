@@ -56,15 +56,28 @@ export class Round {
               self.round = JSON.parse(data.response);
             });
         } else {
+          let rt = _.find(self.roundTypes, r => {return r.id == parms.roundType;});
           self.round = {
             round_date: new Date(),
-            total_score: 30,
-            ends: [{end_number:1, end_score:30, arrow_count: 3}]
+            total_score: 30
+          };
+          if(rt) {
+            self.round.ends = [];
+            self.round.round_type = rt.id;
+            for(var i = 0; i < rt.end_count; i++){
+              self.round.ends.push({
+                arrow_count: Number(rt.end_arrow_count),
+                end_score: 0,
+                end_number: i + 1
+              });
+            }
+            this.eventAggregator.publish('round.ends.change', true);
           }
+           
           if(self.bows.length > 0) {
             self.round.bow_id = self.bows[0].id;
           }
-          if(self.roundTypes.length > 0) {
+          if(self.roundTypes.length > 0 && !self.round.round_type) {
             self.round.round_type = self.roundTypes[0].id;
           }
         }
@@ -159,7 +172,7 @@ export class Round {
       return Number(end.end_score);
     });
     return scores.reduce(
-      function(total, num){ return ((num)?(total + num):0) }
+      function(total, num){ return ((num >= 0)?(total + num):0) }
       , 0);
   }
 }

@@ -9,6 +9,8 @@ import {HttpClient} from 'aurelia-http-client';
 export class Welcome{
 
   heading = 'Your scorecard';
+  roundTypes = [];
+  newRoundType = 1;
   
   constructor(_router, _data, _eventAggregator){
     this.appRouter = _router;
@@ -21,7 +23,7 @@ export class Welcome{
   }
 
   newRound() {
-    this.appRouter.navigateToRoute('round', { id: -1 });
+    this.appRouter.navigateToRoute('round', { id: -1, roundType: this.newRoundType });
   }
 
   editRound(round) {
@@ -51,6 +53,10 @@ export class Welcome{
   activate() {
     this.eventAggregator.publish('viewActivate');
     this.refreshRounds();
+    var self = this;
+    this.client.get("/roundtype").then(results => {
+      self.roundTypes = JSON.parse(results.response);
+    });
   }
 
   refreshRounds() {

@@ -2,13 +2,21 @@
   <require from="../resources/value-converters/dateFormatValueConverter"></require>
   <section class="au-animate container-fluid">
     <div class="page-header">
-      <h2>${heading}&nbsp;
+      <h2>${heading}</h2>
+    </div>
+    <p class="bg-danger" show.bind="errorMessage" >${errorMessage}</p>
+    <div class="row">
+      <div class="col-sm-2 col-sm-2">
         <button click.delegate="newRound()">
           <span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span> New Round
         </button>
-      </h2>
+      </div>
+      <div class="col-md-2 col-sm-2">
+        <select id="type" class="form-control" value.bind="newRoundType" required>
+          <option repeat.for="type of roundTypes" model.bind="type.id">${type.name}</option>
+        </select>
+      </div>
     </div>
-    <p class="bg-danger" show.bind="errorMessage" >${errorMessage}</p>
     <div class="container-fluid">
       <div class="row hidden-xs">
         <div class="col-md-2 col-sm-2"></div>
