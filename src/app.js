@@ -1,6 +1,7 @@
 import {computedFrom, inject} from 'aurelia-framework';
 import {Redirect} from 'aurelia-router';
 import Store from 'common/shooting-log-store';
+import _ from 'underscore';
 
 @inject(Store)
 export class App {
