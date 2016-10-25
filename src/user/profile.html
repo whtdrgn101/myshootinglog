@@ -1,5 +1,6 @@
 <template>
   <require from="../resources/value-converters/dateFormatValueConverter"></require>
+  <require from="../resources/value-converters/dataUriValueConverter"></require>
   <section class="au-animate container-fluid">
     <div class="page-header">
       <h2>${heading}</h2>
@@ -7,9 +8,8 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3">
-          <img src.bind="user.profile_pic" />
+          <img if.bind="user.profile_pic" src.bind="user.profile_pic | dataUri:'image/jpeg'" class="img-responsive img-rounded" />
           <input type="file" accept="image/*" files.bind="file" change.delegate="embedFile()">
-
         </div>
         <div class="col-md-6">
           <dl>
@@ -21,10 +21,8 @@
             <dd><input type="text" value.bind="user.name"></dd>
             <dt>Location</dt>
             <dd><input type="text" value.bind="user.location"></dd>
-            <dt>Most used bows:</dt>
-            <dd></dd>
-            <dt>Highest Lifetime Round Score:</dt>
-            <dd></dd>
+            <dt>Total Arrows Shot:</dt>
+            <dd>${user.arrow_total}</dd>
           </dl>
           <button click.delegate="saveProfile()">Save</button>
         </div>

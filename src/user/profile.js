@@ -25,7 +25,7 @@ export class Profile {
   activate() {
     this.dispatcher.publish('viewActivate');
     var self = this;
-    this.client.get("/user/" + this.store.authToken.userId )
+    this.client.get(`/user/${this.store.authToken.userId}/profile` )
       .then(data => {
         self.user = JSON.parse(data.response);
       })
@@ -44,7 +44,7 @@ export class Profile {
 
   saveProfile() {
     var self = this;
-    this.client.put("/user/" + this.store.authToken.userId, JSON.stringify(this.user) )
+    this.client.put(`/user/${this.store.authToken.userId}`, JSON.stringify(this.user) )
       .then(data => {
         self.user = JSON.parse(data.response);
       })
@@ -72,12 +72,5 @@ export class Profile {
       reader.readAsDataURL(this.file[0]);
     }
 
-  }
-}
-
-export class BlobToUrlValueConverter {
-  toView(blob) {
-    if(blob)
-      return window.URL.createObjectURL(blob[0]);
   }
 }

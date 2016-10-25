@@ -1,5 +1,5 @@
 export default {
-  debug: true,
-  testing: true,
+  debug: false,
+  testing: false,
   API_URL: "http://www.myshootinglog.com:8080"
 };
